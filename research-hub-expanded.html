@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Safety Research | Transmutation Analysis</title>
+    <meta name="description" content="Quantitative AGI risk assessment. Bayesian analysis: P(existential catastrophe|2030)=25.2%. Open-source research.">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #141414;
+            --bg-card: #1a1a1a;
+            --text-primary: #00ff41;
+            --text-secondary: #00cc33;
+            --text-white: #ffffff;
+            --text-gray: #888888;
+            --border: #333333;
+            --warning: #ff0000;
+            --accent: #00ff41;
+        }
+        
+        body {
+            background: var(--bg-primary);
+            color: var(--text-white);
+            font-family: 'Space Mono', 'Courier New', monospace;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        /* Header with social icons */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 40px 20px 30px;
+            border-bottom: 2px solid var(--border);
+            position: relative;
+        }
+        
+        .social-header {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 15px;
+        }
+        
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            color: var(--text-gray);
+            text-decoration: none;
+            font-size: 18px;
+            transition: all 0.3s;
+        }
+        
+        .social-icon:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: translateY(-3px);
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.3);
+        }
+        
+        .warning-badge {
+            color: var(--warning);
+            font-size: 24px;
+            margin-bottom: 15px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .title {
+            font-size: 32px;
+            color: var(--text-primary);
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        
+        .subtitle {
+            font-size: 14px;
+            color: var(--text-gray);
+            margin-bottom: 20px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-value {
+            color: var(--warning);
+            font-size: 28px;
+            font-weight: bold;
+            display: block;
+        }
+        
+        .stat-label {
+            color: var(--text-gray);
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+        
+        /* Two column layout for links */
+        .links-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .links-single {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        /* Link cards */
+        .link-card {
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            padding: 18px 20px;
+            text-decoration: none;
+            color: var(--text-white);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            min-height: 80px;
+        }
+        
+        .link-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background: var(--accent);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+        
+        .link-card:hover {
+            border-color: var(--accent);
+            transform: translateX(5px);
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.2);
+        }
+        
+        .link-card:hover::before {
+            transform: scaleY(1);
+        }
+        
+        .link-card.primary {
+            border-color: var(--accent);
+            background: rgba(0, 255, 65, 0.05);
+        }
+        
+        .link-card.warning {
+            border-color: var(--warning);
+            background: rgba(255, 0, 0, 0.05);
+        }
+        
+        .link-card.warning::before {
+            background: var(--warning);
+        }
+        
+        .link-content {
+            flex: 1;
+        }
+        
+        .link-title {
+            font-size: 15px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: var(--text-primary);
+        }
+        
+        .link-card.warning .link-title {
+            color: var(--warning);
+        }
+        
+        .link-desc {
+            font-size: 11px;
+            color: var(--text-gray);
+            line-height: 1.4;
+        }
+        
+        .link-icon {
+            font-size: 18px;
+            color: var(--text-gray);
+            margin-left: 15px;
+            flex-shrink: 0;
+        }
+        
+        /* Categories */
+        .category {
+            margin-bottom: 35px;
+        }
+        
+        .category-title {
+            color: var(--text-primary);
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .category-icon {
+            font-size: 16px;
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 30px 20px;
+            border-top: 2px solid var(--border);
+            margin-top: 40px;
+        }
+        
+        .countdown {
+            font-size: 24px;
+            color: var(--warning);
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        
+        .japanese {
+            color: var(--text-primary);
+            font-size: 14px;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            font-size: 11px;
+            color: var(--text-gray);
+            margin-top: 10px;
+        }
+        
+        .status-badge.active {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .social-header {
+                position: static;
+                justify-content: center;
+                margin-bottom: 20px;
+            }
+            
+            .title {
+                font-size: 24px;
+            }
+            
+            .stats {
+                gap: 15px;
+            }
+            
+            .stat-value {
+                font-size: 22px;
+            }
+            
+            .links-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .link-card {
+                padding: 15px 18px;
+                min-height: auto;
+            }
+            
+            .link-title {
+                font-size: 14px;
+            }
+            
+            .link-desc {
+                font-size: 10px;
+            }
+        }
+        
+        /* Loading animation */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .link-card {
+            animation: slideIn 0.5s ease-out forwards;
+            opacity: 0;
+        }
+        
+        .link-card:nth-child(1) { animation-delay: 0.1s; }
+        .link-card:nth-child(2) { animation-delay: 0.15s; }
+        .link-card:nth-child(3) { animation-delay: 0.2s; }
+        .link-card:nth-child(4) { animation-delay: 0.25s; }
+        .link-card:nth-child(5) { animation-delay: 0.3s; }
+        .link-card:nth-child(6) { animation-delay: 0.35s; }
+        .link-card:nth-child(7) { animation-delay: 0.4s; }
+        .link-card:nth-child(8) { animation-delay: 0.45s; }
+        .link-card:nth-child(9) { animation-delay: 0.5s; }
+        .link-card:nth-child(10) { animation-delay: 0.55s; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header with social -->
+        <div class="header">
+            <!-- Social icons top right -->
+            <div class="social-header">
+                <a href="https://github.com/colonel1223" class="social-icon" target="_blank" title="GitHub">
+                    <span>⌘</span>
+                </a>
+                <a href="https://linkedin.com/in/YOUR_LINKEDIN" class="social-icon" target="_blank" title="LinkedIn">
+                    <span>in</span>
+                </a>
+                <a href="https://x.com/YOUR_TWITTER" class="social-icon" target="_blank" title="X (Twitter)">
+                    <span>𝕏</span>
+                </a>
+            </div>
+            
+            <div class="warning-badge">⚠️</div>
+            <h1 class="title">Transmutation Research</h1>
+            <p class="subtitle">Quantitative AGI Risk Assessment | Bayesian & Markov Analysis</p>
+            
+            <div class="stats">
+                <div class="stat">
+                    <span class="stat-value">25.2%</span>
+                    <span class="stat-label">X-Risk by 2030</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value">84%</span>
+                    <span class="stat-label">Cognitive Loss 2035</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value">1,460</span>
+                    <span class="stat-label">Days Remaining</span>
+                </div>
+            </div>
+            
+            <div class="status-badge active">● ACTIVE RESEARCH</div>
+        </div>
+        
+        <!-- Primary Research - Full Width -->
+        <div class="category">
+            <h2 class="category-title">
+                <span class="category-icon">📊</span>
+                Primary Research
+            </h2>
+            <div class="links-single">
+                <a href="https://github.com/colonel1223/transmutation-research" class="link-card primary" target="_blank">
+                    <div class="link-content">
+                        <div class="link-title">Complete Mathematical Analysis</div>
+                        <div class="link-desc">Full Bayesian decomposition, Markov chains, 19 peer-reviewed citations, transparent methodology</div>
+                    </div>
+                    <span class="link-icon">→</span>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Interactive Visualizations - Two Column -->
+        <div class="category">
+            <h2 class="category-title">
+                <span class="category-icon">📈</span>
+                Interactive Visualizations
+            </h2>
+            <div class="links-grid">
+                <a href="https://colonel1223.github.io/transmutation-research/Dark_Complex_Transmutation_Visualization_1.html" class="link-card" target="_blank">
+                    <div class="link-content">
+                        <div class="link-title">Dark Complex</div>
+                        <div class="link-desc">Philosophical-mathematical phase transition mapping</div>
+                    </div>
+                    <span class="link-icon">→</span>
+                </a>
+                
+                <a href="https://colonel1223.github.io/transmutation-research/Magnum_Opus_Probabilistic_Infographic.html" class="link-card" target="_blank">
+                    <div class="link-content">
+                        <div class="link-title">Magnum Opus</div>
+                        <div class="link-desc">Comprehensive probability synthesis</div>
+                    </div>
+                    <span class="link-icon">→</span>
+                </a>
+                
+                <a href="https://colonel1223.github.io/transmutation-research/index.html" class="link-card" target="_blank">
+                    <div class="link-content">
+                        <div class="link-title">Research Archive</div>
+                        <div class="link-desc">Complete visual documentation</div>
+                    </div>
+                    <span class="link-icon">→</span>
+                </a>
+                
+                <a href="https://colonel1223.github.io/transmutation-research/research-hub.html" class="link-card" target="_blank">
+                    <div class="link-content">
+                        <div class="link-title">Link Hub</div>
+                        <div class="link-desc">Central navigation portal</div>
+                    </div>
+                    <span class="link-icon">→</span>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Key Findings - Two Column -->
+        <div class="category">
+            <h2 class="category-title">
+                <span class="category-icon">⚠️</span>
+                Key Findings
+            </h2>
+            <div class="links-grid">
+                <a href="https://github.com/colonel1223/transmutation-research#existential-risk-decomposition" class="link-card warning" target="_blank">
+                    <div class="link-content">
+                        <div class="link-title">Existential Risk</div>
+                        <div class="link-desc">25.2% by 2030 | 40× nuclear war probability</div>
+                    </div>
+                    <span class="link-icon">⚠</span>
+                </a>
+                
+                <a href="https://github.com/colonel1223/transmutation-research#cognitive-dissolution-cascade" class="link-card warning" target="_blank">
+                    <div class="link-content">
+                        <div class="link-title">Cognitive Dissolution</div>
+                        <div class="link-desc">84% vestigial by 2035 | Irreversible</div>
+                    </div>
+                    <span class="link-icon">⚠</span>
+                </a>
+                
+                <a href="https://github.com/colonel1223/transmutation-research#the-philosopher-s-stone" class="link-card" target="_blank">
+                    <div class="link-content">
+                        <div class="link-title">Philosopher's Stone</div>
+                        <div class="link-desc">Alchemical framework | Nigredo phase</div>
+                    </div>
+                    <span class="link-icon">→</span>
+                </a>
+                
+                <a href="https://github.com/colonel1223/transmutation-research#fermi-paradox-integration" class="link-card" target="_blank">
+                    <div class="link-content">
+                        <div class="link-title">Fermi Paradox</div>
+                        <div class="link-desc">Great Filter hypothesis | Cosmic silence</div>
+                    </div>
+                    <span class="link-icon">→</span>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Documentation & Media - Two Column -->
+        <div class="category">
+            <h2 class="category-title">
+                <span class="category-icon">📄</span>
+                Documentation & Media
+            </h2>
+            <div class="links-grid">
+                <a href="https://github.com/colonel1223/transmutation-research/blob/main/Probabilistic_Models_Analysis.docx" class="link-card" target="_blank">
+                    <div class="link-content">
+                        <div class="link-title">Models Document</div>
+                        <div class="link-desc">Complete analysis (Word)</div>
+                    </div>
+                    <span class="link-icon">→</span>
+                </a>
+                
+                <a href="https://github.com/colonel1223/transmutation-research#complete-bibliography" class="link-card" target="_blank">
+                    <div class="link-content">
+                        <div class="link-title">Bibliography</div>
+                        <div class="link-desc">19 peer-reviewed citations</div>
+                    </div>
+                    <span class="link-icon">→</span>
+                </a>
+                
+                <a href="https://colonel1223.github.io/transmutation-research/comparison_chart.html" class="link-card" target="_blank">
+                    <div class="link-content">
+                        <div class="link-title">Risk Comparison</div>
+                        <div class="link-desc">Visual chart (40× nuclear)</div>
+                    </div>
+                    <span class="link-icon">→</span>
+                </a>
+                
+                <a href="https://colonel1223.github.io/transmutation-research/timeline_graphic.html" class="link-card" target="_blank">
+                    <div class="link-content">
+                        <div class="link-title">Timeline Graphic</div>
+                        <div class="link-desc">2026→2035 progression</div>
+                    </div>
+                    <span class="link-icon">→</span>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Connect & Collaborate - Full Width -->
+        <div class="category">
+            <h2 class="category-title">
+                <span class="category-icon">🤝</span>
+                Connect & Collaborate
+            </h2>
+            <div class="links-single">
+                <a href="mailto:your.email@example.com" class="link-card">
+                    <div class="link-content">
+                        <div class="link-title">Contact for Research Collaboration</div>
+                        <div class="link-desc">Open to critique, peer review, methodology discussion, and research partnerships</div>
+                    </div>
+                    <span class="link-icon">✉</span>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <div class="countdown">INTERVENTION WINDOW: 1,460 DAYS</div>
+            <div class="japanese">時間は限られています | Time is limited</div>
+            <div class="status-badge">Last updated: 2026.02.14</div>
+        </div>
+    </div>
+    
+    <script>
+        // Countdown timer
+        function updateCountdown() {
+            const targetDate = new Date('2030-01-01');
+            const now = new Date();
+            const diff = targetDate - now;
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            
+            const countdownEl = document.querySelector('.countdown');
+            if (countdownEl && days > 0) {
+                countdownEl.textContent = `INTERVENTION WINDOW: ${days} DAYS`;
+            }
+            
+            const statValue = document.querySelectorAll('.stat-value')[2];
+            if (statValue) {
+                statValue.textContent = days;
+            }
+        }
+        
+        updateCountdown();
+        
+        // Click tracking
+        document.querySelectorAll('.link-card').forEach(link => {
+            link.addEventListener('click', function(e) {
+                const title = this.querySelector('.link-title').textContent;
+                console.log('Link clicked:', title);
+                // Add analytics here
+            });
+        });
+    </script>
+</body>
+</html>
