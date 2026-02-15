@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>colonel1223 | AI Safety Research</title>
+    <meta name="description" content="AI safety researcher. Quantitative AGI risk assessment. Tokyo-based. Open for collaboration.">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Major+Mono+Display&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            /* Y2K Cyberpunk Palette */
+            --bg-dark: #0a0014;
+            --bg-gradient-1: #1a0033;
+            --bg-gradient-2: #001a33;
+            --neon-cyan: #00ffff;
+            --neon-pink: #ff00ff;
+            --neon-green: #00ff41;
+            --neon-blue: #0080ff;
+            --text-white: #ffffff;
+            --text-gray: #a0a0a0;
+            --border-glow: rgba(0, 255, 255, 0.3);
+            --card-bg: rgba(20, 0, 40, 0.6);
+        }
+        
+        body {
+            background: var(--bg-dark);
+            background: linear-gradient(135deg, var(--bg-gradient-1) 0%, var(--bg-dark) 50%, var(--bg-gradient-2) 100%);
+            background-attachment: fixed;
+            color: var(--text-white);
+            font-family: 'Space Mono', monospace;
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        /* Animated background grid */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridScroll 20s linear infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        @keyframes gridScroll {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(50px); }
+        }
+        
+        /* Glowing orbs */
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.15;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .orb-1 {
+            width: 400px;
+            height: 400px;
+            background: var(--neon-cyan);
+            top: -200px;
+            right: -200px;
+            animation: float 15s ease-in-out infinite;
+        }
+        
+        .orb-2 {
+            width: 300px;
+            height: 300px;
+            background: var(--neon-pink);
+            bottom: -150px;
+            left: -150px;
+            animation: float 12s ease-in-out infinite reverse;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(30px, 30px); }
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+            position: relative;
+        }
+        
+        .logo {
+            font-family: 'Major Mono Display', monospace;
+            font-size: 48px;
+            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-pink), var(--neon-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            letter-spacing: 3px;
+            animation: glitch 5s infinite;
+        }
+        
+        @keyframes glitch {
+            0%, 90%, 100% { transform: translate(0); }
+            91% { transform: translate(-2px, 2px); }
+            92% { transform: translate(2px, -2px); }
+            93% { transform: translate(0); }
+        }
+        
+        .tagline {
+            color: var(--neon-cyan);
+            font-size: 14px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+        
+        .about {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 4px;
+            font-size: 13px;
+            line-height: 1.8;
+            color: var(--text-gray);
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.1);
+            margin-top: 20px;
+        }
+        
+        .about-highlight {
+            color: var(--neon-cyan);
+            font-weight: bold;
+        }
+        
+        /* Links */
+        .links {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 40px;
+        }
+        
+        .link-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            padding: 20px 25px;
+            text-decoration: none;
+            color: var(--text-white);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border-radius: 4px;
+        }
+        
+        .link-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 3px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--neon-cyan), var(--neon-pink));
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+        
+        .link-card:hover {
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
+            transform: translateX(5px);
+        }
+        
+        .link-card:hover::before {
+            transform: scaleY(1);
+        }
+        
+        .link-card.primary {
+            border-color: var(--neon-green);
+            background: rgba(0, 255, 65, 0.05);
+        }
+        
+        .link-card.primary:hover {
+            border-color: var(--neon-green);
+            box-shadow: 0 0 30px rgba(0, 255, 65, 0.3);
+        }
+        
+        .link-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .link-content {
+            flex: 1;
+        }
+        
+        .link-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 4px;
+            color: var(--neon-cyan);
+        }
+        
+        .link-card.primary .link-title {
+            color: var(--neon-green);
+        }
+        
+        .link-desc {
+            font-size: 12px;
+            color: var(--text-gray);
+        }
+        
+        .link-arrow {
+            font-size: 20px;
+            color: var(--neon-cyan);
+            margin-left: 15px;
+            transition: transform 0.3s;
+        }
+        
+        .link-card:hover .link-arrow {
+            transform: translateX(5px);
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(0, 255, 255, 0.2);
+            font-size: 11px;
+            color: var(--text-gray);
+        }
+        
+        .timestamp {
+            color: var(--neon-pink);
+            margin-bottom: 10px;
+        }
+        
+        .japanese {
+            color: var(--neon-cyan);
+            font-size: 12px;
+            letter-spacing: 3px;
+            margin-top: 10px;
+        }
+        
+        /* Scanline effect */
+        .scanline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                transparent 50%,
+                rgba(0, 255, 255, 0.02) 51%
+            );
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 9999;
+            animation: scan 8s linear infinite;
+        }
+        
+        @keyframes scan {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(4px); }
+        }
+        
+        /* Responsive */
+        @media (max-width: 600px) {
+            .logo {
+                font-size: 36px;
+            }
+            
+            .tagline {
+                font-size: 12px;
+            }
+            
+            .about {
+                font-size: 12px;
+                padding: 15px;
+            }
+            
+            .link-card {
+                padding: 16px 20px;
+            }
+            
+            .link-title {
+                font-size: 14px;
+            }
+            
+            .link-icon {
+                width: 35px;
+                height: 35px;
+                font-size: 18px;
+            }
+        }
+        
+        /* Loading animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .link-card {
+            animation: fadeInUp 0.6s ease-out forwards;
+            opacity: 0;
+        }
+        
+        .link-card:nth-child(1) { animation-delay: 0.1s; }
+        .link-card:nth-child(2) { animation-delay: 0.2s; }
+        .link-card:nth-child(3) { animation-delay: 0.3s; }
+        .link-card:nth-child(4) { animation-delay: 0.4s; }
+        .link-card:nth-child(5) { animation-delay: 0.5s; }
+        .link-card:nth-child(6) { animation-delay: 0.6s; }
+        
+        /* Glow pulse on primary */
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(0, 255, 65, 0.2); }
+            50% { box-shadow: 0 0 40px rgba(0, 255, 65, 0.4); }
+        }
+        
+        .link-card.primary {
+            animation: fadeInUp 0.6s ease-out forwards, pulse-glow 3s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body>
+    <!-- Background effects -->
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="scanline"></div>
+    
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1 class="logo">colonel1223</h1>
+            <p class="tagline">AI Safety Research • Tokyo</p>
+            
+            <div class="about">
+                Independent researcher quantifying <span class="about-highlight">AGI existential risks</span> through Bayesian decomposition and Markov chain analysis.
+                <br><br>
+                Current work: Mathematical models showing <span class="about-highlight">25.2% P(catastrophe|2030)</span> and <span class="about-highlight">84% cognitive dissolution by 2035</span>.
+                <br><br>
+                Open for collaboration, peer review, and methodology critique.
+            </div>
+        </div>
+        
+        <!-- Links -->
+        <div class="links">
+            <!-- Primary Research -->
+            <a href="https://github.com/colonel1223/transmutation-research" class="link-card primary" target="_blank">
+                <div class="link-icon">📊</div>
+                <div class="link-content">
+                    <div class="link-title">Research Repository</div>
+                    <div class="link-desc">Complete analysis • 19 citations • Interactive visualizations</div>
+                </div>
+                <div class="link-arrow">→</div>
+            </a>
+            
+            <!-- GitHub -->
+            <a href="https://github.com/colonel1223" class="link-card" target="_blank">
+                <div class="link-icon">⌘</div>
+                <div class="link-content">
+                    <div class="link-title">GitHub</div>
+                    <div class="link-desc">Open-source projects • Code repositories</div>
+                </div>
+                <div class="link-arrow">→</div>
+            </a>
+            
+            <!-- LinkedIn -->
+            <a href="https://linkedin.com/in/YOUR_LINKEDIN" class="link-card" target="_blank">
+                <div class="link-icon">in</div>
+                <div class="link-content">
+                    <div class="link-title">LinkedIn</div>
+                    <div class="link-desc">Professional network • Research updates</div>
+                </div>
+                <div class="link-arrow">→</div>
+            </a>
+            
+            <!-- X/Twitter -->
+            <a href="https://x.com/YOUR_TWITTER" class="link-card" target="_blank">
+                <div class="link-icon">𝕏</div>
+                <div class="link-content">
+                    <div class="link-title">X (Twitter)</div>
+                    <div class="link-desc">Real-time thoughts • Research threads</div>
+                </div>
+                <div class="link-arrow">→</div>
+            </a>
+            
+            <!-- Discord -->
+            <a href="https://discord.gg/YOUR_DISCORD" class="link-card" target="_blank">
+                <div class="link-icon">💬</div>
+                <div class="link-content">
+                    <div class="link-title">Discord</div>
+                    <div class="link-desc">Community • Direct discussion</div>
+                </div>
+                <div class="link-arrow">→</div>
+            </a>
+            
+            <!-- Email -->
+            <a href="mailto:your.email@example.com" class="link-card">
+                <div class="link-icon">✉</div>
+                <div class="link-content">
+                    <div class="link-title">Email</div>
+                    <div class="link-desc">Collaboration • Media inquiries</div>
+                </div>
+                <div class="link-arrow">→</div>
+            </a>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <div class="timestamp">LAST SYNC: 2026.02.14 • 19:47:33 JST</div>
+            <div class="japanese">時間は限られています</div>
+            <div style="margin-top: 15px; font-size: 10px;">
+                Open source • Self-hosted • Data sovereign
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Simple click tracking (console log - add your analytics)
+        document.querySelectorAll('.link-card').forEach(link => {
+            link.addEventListener('click', function() {
+                const title = this.querySelector('.link-title').textContent;
+                console.log('Link clicked:', title, new Date().toISOString());
+                // Add your analytics code here
+            });
+        });
+        
+        // Update timestamp
+        function updateTimestamp() {
+            const now = new Date();
+            const jst = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Tokyo' }));
+            const formatted = `${jst.getFullYear()}.${String(jst.getMonth()+1).padStart(2,'0')}.${String(jst.getDate()).padStart(2,'0')} • ${String(jst.getHours()).padStart(2,'0')}:${String(jst.getMinutes()).padStart(2,'0')}:${String(jst.getSeconds()).padStart(2,'0')} JST`;
+            document.querySelector('.timestamp').textContent = `LAST SYNC: ${formatted}`;
+        }
+        
+        updateTimestamp();
+        setInterval(updateTimestamp, 1000);
+    </script>
+</body>
+</html>
